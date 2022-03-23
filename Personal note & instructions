@@ -88,3 +88,81 @@ it finds. If want to select an element that has same text as another element, th
         //With Selector
         cy.contains("[type='submit']","Not Unique Text")
 
+find() has to be chained, usually with get(). find() will find the descendent DOM of whatever is passed in get()
+
+-------------------------------------------------------------------------------------------------------------
+PART 2
+Create habit.spec.js test file
+
+Enter code:
+
+                /// <reference types="cypress" />
+
+                describe("habit dashboard", () => {
+                        beforeEach(() => {
+                                cy.visit("/habits")
+                        })
+
+                        it("should display modal when add button is clicked", () => {
+                                cy.contains("button", "Add").click() //good to use a selector with contains just in case another element with text "add" appears in future
+                                cy.contains("Add a new habit").should("be.visible") //is an assertion. Making sure new modal appears when add btn is clicked
+                        })
+
+                        it("should display habit card when new habit is added", () => {
+                                cy.get("#habit-add-btn").click()
+                                cy.get("input[placeholder='Habit']").type("Drink a cup of water")
+                                cy.contains("Save Changes").click()
+                                cy.contains("Drink a cup of water")
+                                .should("be.visible")
+                                .should("have.class", "HabitCard__habit-container") //can also use .and("have.class", "HabitCard__habit-container") instead
+                        })
+
+                        it("should toggle icon when habit card is clicked", () => {
+                                cy.get("#habit-add-btn").click()
+                                cy.get("input[placeholder='Habit']").type("Drink a cup of water")
+                                cy.contains("Save Changes").click()
+                                cy.get("[src='/static/media/close.fa7e5ead.svg']").should("be.visible")
+                                cy.contains("Drink a cup of water").click()
+                                cy.get("[src='/static/media/check.9e8832df.svg']").should("be.visible")
+                        })
+
+                })
+
+---------------------------------------------------------------------------
+PART 3
+Create accomplishment.spec.js test file
+Enter code:
+
+                ///<reference types="cypress" />
+
+                describe("Accomplishment Dashboard", () => {
+                        beforeEach(()=> {
+                                cy.visit("/accomplishments")
+                        })
+
+                        it("should showcase error if information is missing", () =>{
+                                cy.get("[data-cy='accomplishment-title-input']").type("My Basketball Accomplishment")
+                                cy.get("[data-cy='accomplishment-input']").type("I made 10 threes in a row")
+                                cy.contains("Submit Accomplishment").click()
+                                cy.contains("Complete the items above to continue").should("be.visible")
+                        })
+
+                        it("should display validation component if all information is input", () => {
+                                cy.get("[data-cy='accomplishment-title-input']").type("My Basketball Accomplishment")
+                                cy.get("[data-cy='accomplishment-input']").type("I made 10 threes in a row")
+                                cy.get("[type='checkbox']").click()
+                                cy.contains("Submit Accomplishment").click()
+                                cy.contains("This Accomplisment was Successfully Submitted").should("be.visible")
+                        })
+
+                        it("should return back to accomplishment dashboard with empty inputs when 'Go Back' button is clicked", () => {
+                                cy.get("[data-cy='accomplishment-title-input']").type("My Basketball Accomplishment")
+                                cy.get("[data-cy='accomplishment-input']").type("I made 10 threes in a row")
+                                cy.get("[type='checkbox']").click()
+                                cy.contains("Submit Accomplishment").click()
+                                cy.contains("Go Back").click()
+                                cy.get("[data-cy='accomplishment-title-input']").should("have.value", "")
+                                cy.get("[data-cy='accomplishment-input']").should("have.value", "")
+                                cy.get("[type='checkbox']").should('not.be.checked')
+                        })
+                })

@@ -48,5 +48,11 @@ describe("locators", () => {
         cy.contains("[type='submit']","Not Unique Text")
 
         cy.get("[type='submit']").contains("Not Unique Text") //Using get and then filtering result with contains
+        cy.contains("[type='submit']", "Not Unique Text") //another way to get same element as above line
+    })
+
+    it("locating elements with find", () => {
+        cy.get("#form-1").find(".btn-1")
+        cy.get("#form-1").find(".btn-2")
     })
 })
